@@ -1,0 +1,13 @@
+# 講稿與內部筆記，不對外
+講稿-v*.md
+腳本.md
+versions.html
+
+# 其他四個未採用的版本
+02-*.html
+03-*.html
+04-*.html
+05-*.html
+
+# 系統
+.DS_Store

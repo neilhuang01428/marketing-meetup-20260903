@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>全 AI 驅動的部落格 · 琨懿 Neil · 果果國際 | AI in marketing meetup 2026.09.03</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --paper:#FDF3E8;
+    --paper2:#F6E9D9;
+    --blue:#2B4BC8;
+    --blue-d:#1D3390;
+    --blue-t:rgba(43,75,200,.065);
+    --blue-t2:rgba(43,75,200,.14);
+    --line:rgba(43,75,200,.32);
+    --line-s:rgba(43,75,200,.17);
+    --ink:#2B2823;
+    --grey:#68625A;
+    --faint:#A3998C;
+    --serif:"Songti TC","Noto Serif TC","Source Han Serif TC","STSong",serif;
+    --sans:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+    --mono:"SF Mono","JetBrains Mono","Menlo","Consolas",monospace;
+  }
+  html,body{height:100%}
+  body{background:#E5D8C7; color:var(--ink); font-family:var(--sans);
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+    -webkit-font-smoothing:antialiased;}
+
+  #stage{position:relative; overflow:hidden;
+    width:min(100vw, calc(100vh * 16 / 9));
+    height:min(100vh, calc(100vw * 9 / 16));
+    container-type:size;
+    background:var(--paper);
+    box-shadow:0 0 70px rgba(70,48,24,.28);}
+
+  .slide{position:absolute; inset:0; opacity:0; visibility:hidden; transition:opacity .45s ease;}
+  .slide.active{opacity:1; visibility:visible;}
+
+  .pad{position:absolute; inset:0; padding:10cqh 5.5cqw 8cqh;
+       display:flex; flex-direction:column;}
+
+  /* ── 版式框架 ── */
+  .eyebrow{position:absolute; left:5.5cqw; top:5.1cqh; z-index:5;
+    font-size:1.85cqh; letter-spacing:.16em; color:var(--blue); font-weight:600;}
+  .wordmark{position:absolute; right:5.5cqw; top:4.4cqh; z-index:5;
+    font-family:var(--serif); font-size:2.5cqh; color:var(--blue); letter-spacing:.015em;}
+  .wordmark i{font-style:italic}
+  .wordmark b{font-weight:700}
+  .pnum{position:absolute; right:5.5cqw; bottom:3.8cqh; z-index:5;
+    font-family:var(--mono); font-size:2cqh; color:var(--faint); letter-spacing:.1em;}
+
+  /* ── 字級層次 ── */
+  h1.t{font-family:var(--serif); font-weight:700; line-height:1.2; letter-spacing:.012em;}
+  .t-xl{font-size:7.8cqh}
+  .t-lg{font-size:6.1cqh}
+  .t-md{font-size:4.9cqh}
+  .t-sm{font-size:3.9cqh}
+  .hi{color:var(--blue)}
+  .rule{height:.32cqh; width:9cqw; background:var(--blue); margin:2.6cqh 0 2.4cqh; flex:none;}
+  .rule.wide{width:100%; height:1px; background:var(--line); margin:2.2cqh 0;}
+
+  p.p{font-size:2.35cqh; line-height:1.72; color:var(--grey);}
+  p.p b{color:var(--ink); font-weight:600;}
+  .lede{font-size:2.6cqh; line-height:1.7; color:var(--ink);}
+  .kv{font-family:var(--mono); font-size:1.75cqh; letter-spacing:.1em; color:var(--faint);}
+  .cap{font-size:1.85cqh; line-height:1.55; color:var(--faint);}
+
+  /* ── 圓角線框元件 ── */
+  .box{border:1px solid var(--line); border-radius:1.5cqh; padding:2.2cqh 1.8cqw;}
+  .box.fill{background:var(--blue-t); border-color:var(--line-s);}
+  .chip{display:inline-flex; align-items:center; gap:.7cqw;
+    border:1px solid var(--line); border-radius:5cqh; padding:.9cqh 1.4cqw;
+    font-size:2.05cqh; color:var(--ink); line-height:1.25;}
+  .chip .q{font-family:var(--serif); color:var(--blue); font-weight:700; font-size:2.5cqh;}
+  .quote{border-left:.34cqh solid var(--blue); padding:.4cqh 0 .4cqh 1.5cqw;
+    font-family:var(--serif); font-size:2.7cqh; line-height:1.6; color:var(--ink);}
+  .quote b{color:var(--blue)}
+  .stat{font-family:var(--serif); font-weight:700; color:var(--blue); line-height:1;}
+
+  [hidden]{display:none !important;}
+
+  /* ── 可點選的問題（tab） ── */
+  button.chip{background:transparent; font-family:inherit; cursor:pointer;
+    text-align:left; transition:border-color .18s ease, background .18s ease;}
+  button.chip:hover{border-color:var(--blue);}
+  button.chip.on{border-color:var(--blue); border-width:1.5px; background:var(--blue-t); font-weight:600;}
+  button.chip.on .q{transform:scale(1.15);}
+  button.chip:focus-visible{outline:2px solid var(--blue); outline-offset:3px;}
+  .tabhint{font-family:var(--mono); font-size:1.5cqh; letter-spacing:.14em; color:var(--faint);}
+
+  /* ── P01 底部三欄（提高存在感） ── */
+  .strip{margin-top:2.2cqh; background:rgba(43,75,200,.045);
+    border:1px solid var(--line-s); border-radius:1.6cqh;
+    padding:2.8cqh 2.4cqw 2.6cqh;
+    display:grid; grid-template-columns:1.14fr 1fr .88fr; gap:0 2.6cqw;}
+  .strip .col{padding-right:2.4cqw; border-right:1px solid var(--line-s);}
+  .strip .col:last-child{padding-right:0; border-right:none;}
+  .strip .lbl{font-family:var(--mono); font-size:1.95cqh; letter-spacing:.13em;
+    color:var(--blue); margin-bottom:1.3cqh; display:flex; align-items:center; gap:.6cqw;}
+  .strip .lbl em{font-style:normal; font-family:var(--serif); font-size:2.5cqh; font-weight:700;}
+  .strip .txt{font-size:2.62cqh; line-height:1.55; color:var(--ink);}
+  .strip .txt b{color:var(--blue); font-weight:600;}
+
+  /* ── 圖片 ── */
+  .shot{border:1px solid var(--line); border-radius:1.2cqh; overflow:hidden;
+    background:#fff; cursor:zoom-in; position:relative; flex:none;
+    box-shadow:0 .6cqh 2cqh rgba(80,56,28,.09);}
+  .shot img{display:block; width:100%; height:100%; object-fit:cover; object-position:top center;}
+  .shot::after{content:"⤢"; position:absolute; right:.5cqw; bottom:.5cqh;
+    font-size:1.7cqh; color:var(--blue); background:rgba(253,243,232,.92);
+    border-radius:.5cqh; padding:.1cqh .4cqw; line-height:1.3;}
+
+  /* ── 佔位框 ── */
+  .ph{border:1.5px dashed var(--line); border-radius:1.5cqh; flex:none;
+    background:var(--blue-t);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:.9cqh; padding:1.6cqh 1.2cqw; text-align:center; overflow:hidden;}
+  .ph svg{width:4.2cqh; height:4.2cqh; flex:none; opacity:.55;}
+  .ph .fn{font-family:var(--mono); font-size:1.72cqh; color:var(--blue-d);
+    background:var(--blue-t2); border-radius:.7cqh; padding:.35cqh .8cqw; letter-spacing:.01em;}
+  .ph .use{font-size:1.72cqh; color:var(--faint); line-height:1.5;}
+  .ph .tag{font-family:var(--mono); font-size:1.5cqh; letter-spacing:.18em; color:var(--faint);}
+
+  /* ── SVG 語彙（吃 CSS 變數） ── */
+  svg .s{fill:none; stroke:var(--blue); stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round;}
+  svg .s2{fill:none; stroke:var(--line); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round;}
+  svg .sf{fill:none; stroke:var(--faint); stroke-width:1.5;}
+  svg .f{fill:var(--blue); stroke:none;}
+  svg .fl{fill:var(--line-s); stroke:none;}
+  svg .ft{fill:var(--blue-t); stroke:none;}
+  svg .fp{fill:var(--paper); stroke:none;}
+  svg .tx{fill:var(--ink); font-family:var(--sans); font-weight:400;}
+  svg .tb{fill:var(--blue); font-family:var(--serif); font-weight:700;}
+  svg .tn{fill:var(--blue); font-family:var(--sans); font-weight:600;}
+  svg .tg{fill:var(--grey); font-family:var(--sans); font-weight:400;}
+  svg .tf{fill:var(--faint); font-family:var(--mono); font-weight:400;}
+  svg .tw{fill:#FDF3E8; font-family:var(--sans); font-weight:600;}
+
+  .fx{width:100%; display:flex; justify-content:center; align-items:center;}
+  .fx svg{width:100%; height:var(--fh); display:block;}
+
+  /* ── 進場動畫 ── */
+  .slide.active .an>*{animation:rise .5s cubic-bezier(.2,.7,.3,1) both;}
+  .slide.active .an>*:nth-child(1){animation-delay:.04s}
+  .slide.active .an>*:nth-child(2){animation-delay:.13s}
+  .slide.active .an>*:nth-child(3){animation-delay:.22s}
+  .slide.active .an>*:nth-child(4){animation-delay:.31s}
+  .slide.active .an>*:nth-child(5){animation-delay:.40s}
+  @keyframes rise{from{opacity:0; transform:translateY(1.6cqh);} to{opacity:1; transform:none;}}
+
+  /* ── chrome ── */
+  #bar{position:absolute; top:0; left:0; height:3px; background:var(--blue);
+    z-index:30; transition:width .35s ease;}
+  #hint{position:absolute; left:5.5cqw; bottom:3.8cqh; z-index:30;
+    font-family:var(--mono); font-size:1.6cqh; color:var(--faint); letter-spacing:.05em;}
+
+  /* ── lightbox ── */
+  #lb{position:fixed; inset:0; z-index:100; display:none;
+    align-items:center; justify-content:center; padding:2vh 2vw;
+    background:rgba(34,24,14,.93); cursor:zoom-out;}
+  #lb.on{display:flex;}
+  #lb img{max-width:96vw; max-height:96vh; object-fit:contain; background:#fff;
+    border-radius:4px; box-shadow:0 12px 70px rgba(0,0,0,.6);}
+  #lb .close{position:absolute; top:2.2vh; right:2.4vw; color:#FDF3E8;
+    font-family:var(--mono); font-size:2.2vh; letter-spacing:.1em; opacity:.8;}
+
+  @media (max-width:680px){ #hint{display:none} }
+  @media (prefers-reduced-motion:reduce){
+    .slide{transition:none}
+    .slide.active .an>*{animation:none}
+    #bar{transition:none}
+  }
+
+  /* ── 列印 / PDF 備援 ── */
+  @media print{
+    @page{ size:A4 landscape; margin:0; }
+    html,body{height:auto; background:#fff;}
+    body{display:block; overflow:visible;}
+    #stage{width:100%; height:auto; box-shadow:none; container-type:normal; background:#fff;}
+    .slide{position:relative; inset:auto; opacity:1; visibility:visible;
+      width:297mm; height:208mm; container-type:size; background:var(--paper);
+      page-break-after:always; break-after:page; overflow:hidden;}
+    .slide:last-child{page-break-after:auto; break-after:auto;}
+    .slide.active .an>*{animation:none}
+    .shot::after{display:none}
+    #bar,#hint,#lb{display:none !important;}
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+<div id="bar"></div>
+<div id="hint">← → 翻頁 · F 全螢幕 · 點圖放大 · 點右側前進</div>
+
+<!-- ══════════ P01 ══════════ -->
+<section class="slide active">
+  <div class="eyebrow">開場 ｜ 果果國際 · 琨懿 Neil</div>
+  <div class="wordmark">AI <i>in</i> <b>marketing</b> meetup</div>
+  <div class="pad">
+    <div class="an" style="display:flex;flex-direction:column;height:100%;gap:0">
+      <div style="display:grid;grid-template-columns:1.06fr 1fr;gap:0 4.4cqw;align-items:start;flex:1">
+        <div>
+          <h1 class="t t-xl">我做了一個<br><span class="hi">全 AI 驅動</span>的部落格</h1>
+          <div class="rule"></div>
+          <p class="p"><b>果果國際</b>　3C 電商通路品牌，專賣 Apple 福利機<br>整理過的二手 iPad、iPhone、Mac</p>
+          <div class="quote" style="margin-top:3.2cqh;font-size:3cqh;line-height:1.55">我不敢說自己是行銷人。<br>想以<b>中小企業</b>的角度，分享一個<br>我用 AI 解決公司行銷痛點的案例。</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1.4cqh">
+          <div class="shot" style="height:26cqh"><img src="pic/官網首頁.png" alt="果果國際官網首頁" /></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.4cqw">
+            <div class="shot" style="height:28cqh"><img src="pic/部落格首頁.png" alt="果果教學部落格首頁" /></div>
+            <div class="shot" style="height:28cqh"><img src="pic/部落格管理後台.png" alt="部落格管理後台" /></div>
+          </div>
+          <div class="kv" style="display:flex;justify-content:space-between">
+            <span>官網</span><span>部落格</span><span>管理後台</span>
+          </div>
+        </div>
+      </div>
+      <div class="strip">
+        <div class="col">
+          <div class="lbl"><em>①</em>平台的部落格模組</div>
+          <div class="txt" style="white-space:nowrap">schema 加不了、UI／UX 難調整<br>手機版不友善、<b>系統面優化不了 SEO</b></div>
+        </div>
+        <div class="col">
+          <div class="lbl"><em>②</em>人的成本</div>
+          <div class="txt">每多一個需要人介入的<b>環節</b>，<br>一篇文章的成本就<b>往上跳一階</b></div>
+        </div>
+        <div class="col">
+          <div class="lbl" style="color:var(--grey)">於是我做了 90% 由 AI 驅動的流程</div>
+          <div style="display:flex;align-items:baseline;gap:.9cqw;white-space:nowrap">
+            <span style="font-size:2.3cqh;color:var(--faint)">一週</span>
+            <span class="stat" style="font-size:5.6cqh;color:var(--faint)">1</span>
+            <span style="font-size:2.3cqh;color:var(--faint)">篇</span>
+            <span style="font-size:3.4cqh;color:var(--blue);margin:0 .5cqw">→</span>
+            <span style="font-size:2.3cqh;color:var(--ink)">一小時</span>
+            <span class="stat" style="font-size:9cqh;line-height:.9">8</span>
+            <span style="font-size:2.3cqh;color:var(--ink)">篇</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pnum">01</div>
+</section>
+
+<!-- ══════════ P02 ══════════ -->
+<section class="slide">
+  <div class="eyebrow">議題一 ｜ 一千篇以上，到底要怎麼管理</div>
+  <div class="wordmark">AI <i>in</i> <b>marketing</b> meetup</div>
+  <div class="pad">
+    <div class="an" style="display:flex;flex-direction:column;height:100%">
+      <div class="kv" style="margin-bottom:1.3cqh">一個小時八篇，聽起來很爽。但真正開始跑之後，我才發現 ——</div>
+      <h1 class="t t-lg">生產變快之後，第一個爆掉的<br>不是<span class="hi">產能</span>，是<span class="hi">管理</span></h1>
+      <div class="rule" style="margin:2cqh 0 2.2cqh"></div>
+      <div style="display:grid;grid-template-columns:1fr 30cqw;gap:0 3.6cqw;align-items:start;flex:1">
+        <div data-tabs="#p02panels" style="display:flex;gap:2.6cqw;align-items:center">
+          <div style="white-space:nowrap;flex:none">
+            <span class="stat" style="font-size:8cqh;line-height:.9">1,000</span><span style="font-size:2.5cqh;color:var(--grey);margin-left:.6cqw">篇以上</span>
+            <div class="kv" style="margin-top:.9cqh">問題就全部變了</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;flex-direction:column;gap:1.15cqh;align-items:flex-start">
+              <button type="button" class="chip on" data-tab="a"><span class="q">？</span>這篇有沒有配圖</button>
+              <button type="button" class="chip" data-tab="b"><span class="q">？</span>有沒有設常見問答</button>
+              <button type="button" class="chip" data-tab="c"><span class="q">？</span>有沒有跟其他文章互連，還是變成沒人連的孤島</button>
+              <button type="button" class="chip" data-tab="d"><span class="q">？</span>半年前寫的那篇，系統改版之後還對嗎</button>
+              <button type="button" class="chip" data-tab="e"><span class="q">？</span>這個題目，我是不是已經寫過了</button>
+            </div>
+            <div class="tabhint" style="margin-top:1.2cqh">點這些問題 · 右邊會切到對應的後台畫面</div>
+          </div>
+        </div>
+        <div id="p02panels">
+          <div data-panel="a">
+            <div class="shot" style="height:39cqh"><img src="pic/後台-封面.png" alt="果果教學後台的首圖管理頁" /></div>
+            <div class="kv" style="margin-top:1.1cqh;text-align:center;letter-spacing:.06em">後台「首圖管理」· 一眼看出誰還沒有首圖</div>
+          </div>
+          <div data-panel="b" hidden>
+            <div class="shot" style="height:39cqh"><img src="pic/後台-常見問答.png" alt="文章頁的常見問題區塊" /></div>
+            <div class="kv" style="margin-top:1.1cqh;text-align:center;letter-spacing:.06em">文章頁的常見問答區塊 · 每篇都要設</div>
+          </div>
+          <div data-panel="c" hidden>
+            <div class="shot" style="height:39cqh"><img src="pic/後台-延伸閱讀.png" alt="文章頁的延伸閱讀區塊" /></div>
+            <div class="kv" style="margin-top:1.1cqh;text-align:center;letter-spacing:.06em">文章頁的延伸閱讀 · 同主題互相連過去</div>
+          </div>
+          <div data-panel="d" hidden>
+            <div class="shot" style="height:39cqh"><img src="pic/後台-健康檢查.png" alt="果果教學後台的健康檢查頁" /></div>
+            <div class="kv" style="margin-top:1.1cqh;text-align:center;letter-spacing:.06em">後台「健康檢查」· 它會告訴我哪幾篇可能過時</div>
+          </div>
+          <div data-panel="e" hidden>
+            <div class="shot" style="height:39cqh"><img src="pic/後台-題目卡.png" alt="果果教學後台的題目卡頁" /></div>
+            <div class="kv" style="margin-top:1.1cqh;text-align:center;letter-spacing:.06em">後台「題目卡」· 發想前先比對，避免重複</div>
+          </div>
+        </div>
+      </div>
+      <div class="box fill" style="margin-top:auto;padding:1.9cqh 2cqw">
+        <div style="font-family:var(--serif);font-size:2.9cqh;color:var(--ink);line-height:1.4">
+          所以我做的第一件事，不是加快生產 ——<br>是<b class="hi">先蓋一個看得見全站的後台</b>。
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pnum">02</div>
+</section>
+
+<!-- ══════════ P03 ══════════ -->
+<section class="slide">
+  <div class="eyebrow">議題一 ｜ 把管理變成看得見的東西</div>
+  <div class="wordmark">AI <i>in</i> <b>marketing</b> meetup</div>
+  <div class="pad" style="padding-top:9cqh;padding-bottom:8.5cqh">
+    <div class="an" style="display:flex;flex-direction:column;height:100%">
+      <h1 class="t t-md">我把<span class="hi">九個環節</span>，變成後台裡看得見的<span class="hi">九個狀態</span></h1>
+      <div class="fx" style="--fh:54cqh;margin-top:2.2cqh">
+        <svg viewBox="0 0 1180 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="九個環節對照後台九個狀態">
+          <!-- 左：九個環節 -->
+          <text x="6" y="24" class="tf" font-size="15">P R O C E S S</text>
+          <rect x="4" y="38" width="300" height="440" rx="16" class="s2"/>
+          <text x="154" y="76" class="tb" font-size="21" text-anchor="middle">做一篇文章的九個環節</text>
+          <path d="M28 94 H280" class="s2" stroke-dasharray="3 5"/>
+          <g>
+            <circle cx="46" cy="120" r="13" class="s2"/><text x="46" y="125" class="tn" font-size="13" text-anchor="middle">1</text><text x="74" y="126" class="tx" font-size="18">想題目</text>
+            <circle cx="46" cy="160" r="13" class="s2"/><text x="46" y="165" class="tn" font-size="13" text-anchor="middle">2</text><text x="74" y="166" class="tx" font-size="18">查資料</text>
+            <circle cx="46" cy="200" r="13" class="s2"/><text x="46" y="205" class="tn" font-size="13" text-anchor="middle">3</text><text x="74" y="206" class="tx" font-size="18">寫</text>
+            <circle cx="46" cy="240" r="13" class="s2"/><text x="46" y="245" class="tn" font-size="13" text-anchor="middle">4</text><text x="74" y="246" class="tx" font-size="18">校對</text>
+            <circle cx="46" cy="280" r="13" class="s2"/><text x="46" y="285" class="tn" font-size="13" text-anchor="middle">5</text><text x="74" y="286" class="tx" font-size="18">配圖</text>
+            <circle cx="46" cy="320" r="13" class="s2"/><text x="46" y="325" class="tn" font-size="13" text-anchor="middle">6</text><text x="74" y="326" class="tx" font-size="18">排版上架</text>
+            <circle cx="46" cy="360" r="13" class="s2"/><text x="46" y="365" class="tn" font-size="13" text-anchor="middle">7</text><text x="74" y="366" class="tx" font-size="18">SEO 設定</text>
+            <circle cx="46" cy="400" r="13" class="s2"/><text x="46" y="405" class="tn" font-size="13" text-anchor="middle">8</text><text x="74" y="406" class="tx" font-size="18">內部連結</text>
+            <circle cx="46" cy="440" r="13" class="s2"/><text x="46" y="445" class="tn" font-size="13" text-anchor="middle">9</text><text x="74" y="446" class="tx" font-size="18">之後的更新</text>
+          </g>
+          <!-- 中間箭頭 -->
+          <text x="356" y="228" class="tb" font-size="18" text-anchor="middle">變成</text>
+          <path d="M314 258 H392" class="s" stroke-width="2"/>
+          <path d="M404 258 L389 250.5 L389 265.5 Z" class="f"/>
+          <text x="356" y="292" class="tg" font-size="15" text-anchor="middle">看得見</text>
+          <!-- 右：後台 -->
+          <text x="414" y="24" class="tf" font-size="15">D A S H B O A R D</text>
+          <rect x="414" y="38" width="762" height="440" rx="16" class="s"/>
+          <path d="M414 92 H1176" class="s2"/>
+          <circle cx="444" cy="66" r="6" class="s2"/><circle cx="464" cy="66" r="6" class="s2"/><circle cx="484" cy="66" r="6" class="s2"/>
+          <text x="510" y="73" class="tb" font-size="19">果果部落格 · 管理後台</text>
+          <text x="1156" y="72" class="tf" font-size="15" text-anchor="end">約二十幾個頁面</text>
+          <!-- tabs -->
+          <g>
+            <rect x="438" y="108" width="54" height="30" rx="15" class="f"/><text x="465" y="128" class="tw" font-size="15" text-anchor="middle">總覽</text>
+            <rect x="505" y="108" width="72" height="30" rx="15" class="s2"/><text x="541" y="128" class="tg" font-size="15" text-anchor="middle">健康度</text>
+            <rect x="590" y="108" width="72" height="30" rx="15" class="s2"/><text x="626" y="128" class="tg" font-size="15" text-anchor="middle">題目卡</text>
+            <rect x="675" y="108" width="54" height="30" rx="15" class="s2"/><text x="702" y="128" class="tg" font-size="15" text-anchor="middle">進度</text>
+            <rect x="742" y="108" width="54" height="30" rx="15" class="s2"/><text x="769" y="128" class="tg" font-size="15" text-anchor="middle">標籤</text>
+            <rect x="809" y="108" width="54" height="30" rx="15" class="s2"/><text x="836" y="128" class="tg" font-size="15" text-anchor="middle">封面</text>
+            <rect x="876" y="108" width="90" height="30" rx="15" class="s2"/><text x="921" y="128" class="tg" font-size="15" text-anchor="middle">延伸閱讀</text>
+            <rect x="979" y="108" width="54" height="30" rx="15" class="s2"/><text x="1006" y="128" class="tg" font-size="15" text-anchor="middle">SEO</text>
+            <rect x="1046" y="108" width="90" height="30" rx="15" class="s2"/><text x="1091" y="128" class="tg" font-size="15" text-anchor="middle">內容地圖</text>
+          </g>
+          <!-- 五個看得見的狀態 -->
+          <g>
+            <rect x="438" y="158" width="714" height="56" rx="10" class="ft"/><rect x="438" y="158" width="714" height="56" rx="10" class="s2"/>
+            <text x="464" y="194" class="tb" font-size="19">想題目</text>
+            <text x="600" y="193" class="tx" font-size="17">一張題目卡：還只是想法 / 已經寫成文章</text>
+            <circle cx="1040" cy="186" r="9" class="f"/><circle cx="1072" cy="186" r="9" class="f"/><circle cx="1104" cy="186" r="9" class="s2"/>
+
+            <rect x="438" y="222" width="714" height="56" rx="10" class="ft"/><rect x="438" y="222" width="714" height="56" rx="10" class="s2"/>
+            <text x="464" y="258" class="tb" font-size="19">配圖</text>
+            <text x="600" y="257" class="tx" font-size="17">這篇有沒有首圖，一眼看得到</text>
+            <circle cx="1040" cy="250" r="9" class="f"/><circle cx="1072" cy="250" r="9" class="s2"/><circle cx="1104" cy="250" r="9" class="s2"/>
+
+            <rect x="438" y="286" width="714" height="56" rx="10" class="ft"/><rect x="438" y="286" width="714" height="56" rx="10" class="s2"/>
+            <text x="464" y="322" class="tb" font-size="19">SEO</text>
+            <text x="600" y="321" class="tx" font-size="17">標題 · 描述 · 標籤，有沒有齊</text>
+            <circle cx="1040" cy="314" r="9" class="f"/><circle cx="1072" cy="314" r="9" class="f"/><circle cx="1104" cy="314" r="9" class="f"/>
+
+            <rect x="438" y="350" width="714" height="56" rx="10" class="ft"/><rect x="438" y="350" width="714" height="56" rx="10" class="s2"/>
+            <text x="464" y="386" class="tb" font-size="19">內部連結</text>
+            <text x="600" y="385" class="tx" font-size="17">它是不是一篇沒人連的孤島</text>
+            <circle cx="1040" cy="378" r="9" class="s2"/><circle cx="1072" cy="378" r="9" class="s2"/><circle cx="1104" cy="378" r="9" class="f"/>
+
+            <rect x="438" y="414" width="714" height="56" rx="10" class="ft"/><rect x="438" y="414" width="714" height="56" rx="10" class="s2"/>
+            <text x="464" y="450" class="tb" font-size="19">更新</text>
+            <text x="600" y="449" class="tx" font-size="17">上次檢查是什麼時候</text>
+            <circle cx="1040" cy="442" r="9" class="f"/><circle cx="1072" cy="442" r="9" class="s2"/><circle cx="1104" cy="442" r="9" class="f"/>
+          </g>
+        </svg>
+      </div>
+      <div style="margin-top:2cqh;display:grid;grid-template-columns:1fr 1fr 16cqw;gap:0 2.6cqw;align-items:center">
+        <div class="quote" style="font-size:2.4cqh">重點不是頁面多 ——<br>是<b>我可以一眼看出全站哪裡有洞</b>，<br>而不是一篇一篇點開來找。</div>
+        <div class="cap" style="font-size:1.95cqh;line-height:1.6">因為站是自己刻的，AI 可以直接改到技術底層：<br>全站 schema 一次改完、網站地圖與站內搜尋自己重新長出來。<br><span style="color:var(--blue)">這在架站平台內建的部落格模組上，是做不到的。</span></div>
+        <div class="shot" style="height:12.5cqh"><img src="pic/部落格管理後台.png" alt="部落格管理後台總覽" /></div>
+      </div>
+    </div>
+  </div>
+  <div class="pnum">03</div>
+</section>
+
+<!-- ══════════ P04 ══════════ -->
+<section class="slide">
+  <div class="eyebrow">議題一 ｜ 管理的第二層 · 自動巡檢</div>
+  <div class="wordmark">AI <i>in</i> <b>marketing</b> meetup</div>
+  <div class="pad">
+    <div class="an" style="display:flex;flex-direction:column;height:100%">
+      <h1 class="t t-md">內容會過期，<span class="hi">但不會有人主動告訴我</span></h1>
+      <div class="kv" style="margin-top:1.4cqh">我不用記得去檢查，它會來找我 —— 所以我做了兩層自動巡檢</div>
+      <div class="rule" style="margin:1.8cqh 0 2cqh"></div>
+      <div style="display:grid;grid-template-columns:1fr 25cqw;gap:0 3.4cqw;align-items:stretch;flex:1">
+        <div class="fx" style="--fh:43cqh">
+          <svg viewBox="0 0 660 380" preserveAspectRatio="xMinYMid meet" role="img" aria-label="兩層自動巡檢">
+            <rect x="4" y="8" width="652" height="162" rx="16" class="s2"/>
+            <rect x="28" y="30" width="176" height="32" rx="16" class="f"/>
+            <text x="116" y="52" class="tw" font-size="16" text-anchor="middle">第一層 · 機械檢查</text>
+            <text x="632" y="52" class="tf" font-size="15" text-anchor="end">不用 AI · 很便宜</text>
+            <text x="28" y="94" class="tx" font-size="18">定期掃全站，抓出：</text>
+            <rect x="28" y="110" width="160" height="38" rx="19" class="s2"/>
+            <text x="108" y="135" class="tb" font-size="17" text-anchor="middle">死掉的連結</text>
+            <rect x="204" y="110" width="228" height="38" rx="19" class="s2"/>
+            <text x="318" y="135" class="tb" font-size="17" text-anchor="middle">失效的 YouTube 影片</text>
+            <rect x="4" y="196" width="652" height="176" rx="16" class="s"/>
+            <rect x="28" y="218" width="176" height="32" rx="16" class="f"/>
+            <text x="116" y="240" class="tw" font-size="16" text-anchor="middle">第二層 · 語意檢查</text>
+            <text x="632" y="240" class="tf" font-size="15" text-anchor="end">每週一早上 · 很便宜的小模型</text>
+            <text x="28" y="284" class="tx" font-size="18">自動掃過全站，判斷哪幾篇的資訊可能過時了：</text>
+            <rect x="28" y="300" width="150" height="38" rx="19" class="s2"/>
+            <text x="103" y="325" class="tb" font-size="17" text-anchor="middle">系統改版了</text>
+            <rect x="194" y="300" width="150" height="38" rx="19" class="s2"/>
+            <text x="269" y="325" class="tb" font-size="17" text-anchor="middle">型號停產了</text>
+            <path d="M360 319 H396" class="s"/><path d="M408 319 L393 311.5 L393 326.5 Z" class="f"/>
+            <text x="418" y="325" class="tx" font-size="17">列出來給我看</text>
+          </svg>
+        </div>
+        <div>
+          <div class="shot" style="height:38cqh"><img src="pic/後台-健康檢查.png" alt="後台健康檢查頁，列出可能過時的文章" /></div>
+          <div class="kv" style="margin-top:1.1cqh;text-align:center;letter-spacing:.06em">它自己列出來的 · 不是我去找的</div>
+        </div>
+      </div>
+      <div class="box" style="margin-top:2cqh;padding:2cqh 2.2cqw;display:grid;grid-template-columns:1.5fr 1fr;gap:0 3cqw;align-items:center">
+        <div class="quote" style="border-left-width:.34cqh;font-size:2.45cqh">這是我自己踩過幾次才學會的：<br>流程裡只要寫了「<b>記得</b>要做某件事」，<b>我就一定會忘記</b>。<br>所以能自動化的，我就盡量直接做掉。</div>
+        <div class="cap" style="font-size:1.85cqh;line-height:1.6">資料也是一樣。<br>凡是能算出來的東西，<br>我就不再另外存一份手動清單 ——<br>因為我一定會忘記更新它。</div>
+      </div>
+    </div>
+  </div>
+  <div class="pnum">04</div>
+</section>
+
+<!-- ══════════ P04b · 議題一小結 ══════════ -->
+<section class="slide">
+  <div class="eyebrow">議題一 ｜ 小結 · 為什麼管得動</div>
+  <div class="wordmark">AI <i>in</i> <b>marketing</b> meetup</div>
+  <div class="pad">
+    <div class="an" style="display:flex;flex-direction:column;height:100%">
+      <h1 class="t t-md">內容一旦有了<span class="hi">格式</span>，才管得動</h1>
+      <div class="kv" style="margin-top:1.4cqh">回頭看，我覺得這才是整件事能成立的關鍵</div>
+      <div class="rule" style="margin:1.8cqh 0 1.6cqh"></div>
+      <div class="fx" style="--fh:46cqh">
+        <svg viewBox="0 0 1000 340" preserveAspectRatio="xMidYMid meet" role="img"
+             aria-label="自由文字經過固定輸出格式後，變成可以長出許多產物的資料">
+          <!-- 左：自由文字 -->
+          <text x="0" y="18" class="tf" font-size="15" letter-spacing="2">直接叫它寫</text>
+          <g transform="translate(6,34)">
+            <rect x="10" y="10" width="118" height="150" rx="6" class="s2" transform="rotate(-4 69 85)"/>
+            <rect x="18" y="4" width="118" height="150" rx="6" class="s2" transform="rotate(3 77 79)"/>
+            <rect x="14" y="0" width="118" height="150" rx="6" class="fp"/>
+            <rect x="14" y="0" width="118" height="150" rx="6" class="s2"/>
+            <path d="M30 26 H116 M30 44 H108 M30 62 H118 M30 80 H96 M30 98 H114 M30 116 H86" class="sf" stroke-width="3" opacity=".55"/>
+          </g>
+          <text x="14" y="216" class="tx" font-size="17">一篇一篇的文章</text>
+          <text x="14" y="240" class="tg" font-size="15">只能一篇一篇打開來讀</text>
+
+          <!-- 箭頭一 -->
+          <path d="M176 108 H244" class="s"/><path d="M256 108 L241 100.5 L241 115.5 Z" class="f"/>
+          <text x="216" y="70" class="tn" font-size="15" text-anchor="middle">先規定</text>
+          <text x="216" y="88" class="tn" font-size="15" text-anchor="middle">輸出格式</text>
+
+          <!-- 中：JSON 卡 -->
+          <rect x="272" y="6" width="270" height="248" rx="12" class="ft"/>
+          <rect x="272" y="6" width="270" height="248" rx="12" class="s"/>
+          <rect x="272" y="6" width="270" height="34" rx="12" class="f"/>
+          <rect x="272" y="28" width="270" height="12" class="f"/>
+          <text x="290" y="29" class="tw" font-size="15" font-family="var(--mono)">文章.json</text>
+          <text x="290" y="68" class="tf" font-size="14">{</text>
+          <text x="304" y="92" class="tf" font-size="14">"標題"</text><text x="452" y="92" class="tg" font-size="13" text-anchor="end">…</text>
+          <text x="304" y="116" class="tf" font-size="14">"描述"</text><text x="452" y="116" class="tg" font-size="13" text-anchor="end">…</text>
+          <text x="304" y="140" class="tf" font-size="14">"分類 / 標籤"</text><text x="452" y="140" class="tg" font-size="13" text-anchor="end">…</text>
+          <text x="304" y="164" class="tf" font-size="14">"首圖"</text><text x="452" y="164" class="tg" font-size="13" text-anchor="end">…</text>
+          <text x="304" y="188" class="tf" font-size="14">"常見問答"</text><text x="452" y="188" class="tg" font-size="13" text-anchor="end">…</text>
+          <text x="304" y="212" class="tf" font-size="14">"延伸閱讀"</text><text x="452" y="212" class="tg" font-size="13" text-anchor="end">…</text>
+          <text x="304" y="236" class="tf" font-size="14">"上次檢查"</text><text x="452" y="236" class="tg" font-size="13" text-anchor="end">…</text>
+          <text x="290" y="252" class="tf" font-size="14">}</text>
+          <text x="272" y="286" class="tx" font-size="17">每篇都是一筆<tspan class="tb">同樣欄位</tspan>的資料</text>
+          <text x="272" y="310" class="tg" font-size="15">AI 只要負責把格子填滿</text>
+
+          <!-- 箭頭二 -->
+          <path d="M562 128 H630" class="s"/><path d="M642 128 L627 120.5 L627 135.5 Z" class="f"/>
+          <text x="602" y="90" class="tn" font-size="15" text-anchor="middle">同一筆資料</text>
+          <text x="602" y="108" class="tn" font-size="15" text-anchor="middle">長出很多地方</text>
+
+          <!-- 右：五個產物 -->
+          <g>
+            <rect x="662" y="8" width="330" height="40" rx="20" class="s2"/><text x="827" y="34" class="tb" font-size="16" text-anchor="middle">首頁列表</text>
+            <rect x="662" y="58" width="330" height="40" rx="20" class="s2"/><text x="827" y="84" class="tb" font-size="16" text-anchor="middle">標籤頁</text>
+            <rect x="662" y="108" width="330" height="40" rx="20" class="s2"/><text x="827" y="134" class="tb" font-size="16" text-anchor="middle">網站地圖</text>
+            <rect x="662" y="158" width="330" height="40" rx="20" class="s2"/><text x="827" y="184" class="tb" font-size="16" text-anchor="middle">站內搜尋索引</text>
+            <rect x="662" y="208" width="330" height="40" rx="20" class="s"/><text x="827" y="234" class="tb" font-size="16" text-anchor="middle">後台的每一盞狀態燈</text>
+          </g>
+          <text x="662" y="286" class="tx" font-size="17">上一頁那些燈之所以亮得起來，</text>
+          <text x="662" y="310" class="tx" font-size="17">就是因為每篇都填在<tspan class="tb">同一組欄位</tspan>裡</text>
+        </svg>
+      </div>
+      <div class="box fill" style="margin-top:auto;padding:2cqh 2.2cqw">
+        <div class="quote" style="border:none;padding:0;font-size:3cqh;line-height:1.5">
+          AI 產出的內容，只要先給它一個<b>輸出格式</b>，<br>
+          它就不只是「文章」—— 而是可以被<b>查詢、統計、檢查</b>的資料。
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pnum">04b</div>
+</section>
+
+<!-- ══════════ P04c · SOP 與 Prompt 的設計理念 ══════════ -->
+<section class="slide">
+  <div class="eyebrow">議題一 ｜ 小結 · SOP 與 Prompt 的設計理念</div>
+  <div class="wordmark">AI <i>in</i> <b>marketing</b> meetup</div>
+  <div class="pad">
+    <div class="an" style="display:flex;flex-direction:column;height:100%">
+      <h1 class="t t-md">有了<span class="hi">格式</span>，才有<span class="hi">模組</span>；<br>有了模組，才 <span class="hi">SOP</span> 得起來</h1>
+      <div class="kv" style="margin-top:1.4cqh">這是我後台那頁「SOP 與 Prompt」背後的想法</div>
+      <div class="rule" style="margin:1.6cqh 0 1.2cqh"></div>
+      <div class="fx" style="--fh:37cqh">
+        <svg viewBox="0 0 1000 216" preserveAspectRatio="xMidYMid meet" role="img"
+             aria-label="格式讓每個動作模組化，模組化之後才寫得出可執行的 SOP">
+
+          <!-- ① 格式 -->
+          <text x="0" y="16" class="tf" font-size="14" letter-spacing="2">① 格式</text>
+          <rect x="0" y="30" width="176" height="150" rx="10" class="ft"/>
+          <rect x="0" y="30" width="176" height="150" rx="10" class="s"/>
+          <rect x="0" y="30" width="176" height="26" rx="10" class="f"/><rect x="0" y="44" width="176" height="12" class="f"/>
+          <text x="14" y="49" class="tw" font-size="12" font-family="var(--mono)">文章.json</text>
+          <path d="M18 78 H126 M18 100 H108 M18 122 H136 M18 144 H96" class="sf" stroke-width="3" opacity=".5"/>
+          <text x="0" y="206" class="tx" font-size="16">每篇都是同樣欄位的一筆資料</text>
+
+          <!-- 箭頭一 -->
+          <path d="M212 105 H272" class="s"/><path d="M284 105 L269 97.5 L269 112.5 Z" class="f"/>
+          <text x="250" y="72" class="tn" font-size="13" text-anchor="middle">每個動作的</text>
+          <text x="250" y="90" class="tn" font-size="13" text-anchor="middle">輸入輸出固定</text>
+
+          <!-- ② 模組 -->
+          <text x="304" y="16" class="tf" font-size="14" letter-spacing="2">② 模組</text>
+          <g>
+            <rect x="304" y="30" width="140" height="38" rx="19" class="s2"/><text x="374" y="55" class="tb" font-size="15" text-anchor="middle">發想題目</text>
+            <rect x="454" y="30" width="140" height="38" rx="19" class="s2"/><text x="524" y="55" class="tb" font-size="15" text-anchor="middle">寫文章</text>
+            <rect x="304" y="78" width="140" height="38" rx="19" class="s2"/><text x="374" y="103" class="tb" font-size="15" text-anchor="middle">配首圖</text>
+            <rect x="454" y="78" width="140" height="38" rx="19" class="s2"/><text x="524" y="103" class="tb" font-size="15" text-anchor="middle">設常見問答</text>
+            <rect x="304" y="126" width="140" height="38" rx="19" class="s2"/><text x="374" y="151" class="tb" font-size="15" text-anchor="middle">配延伸閱讀</text>
+            <rect x="454" y="126" width="140" height="38" rx="19" class="s2"/><text x="524" y="151" class="tb" font-size="15" text-anchor="middle">健康檢查</text>
+          </g>
+          <text x="304" y="206" class="tx" font-size="16">每個動作都是一塊，形狀一樣</text>
+
+          <!-- 箭頭二 -->
+          <path d="M612 105 H672" class="s"/><path d="M684 105 L669 97.5 L669 112.5 Z" class="f"/>
+          <text x="644" y="72" class="tn" font-size="13" text-anchor="middle">才寫得出</text>
+          <text x="644" y="90" class="tn" font-size="13" text-anchor="middle">可照做的步驟</text>
+
+          <!-- ③ SOP -->
+          <text x="704" y="16" class="tf" font-size="14" letter-spacing="2">③ SOP</text>
+          <rect x="704" y="30" width="296" height="150" rx="10" class="fp"/>
+          <rect x="704" y="30" width="296" height="150" rx="10" class="s"/>
+          <text x="722" y="58" class="tb" font-size="17">寫一篇新文章</text>
+          <text x="722" y="86" class="tg" font-size="14">① 從題目卡挑一題</text>
+          <text x="722" y="108" class="tg" font-size="14">② 讓它照格式寫</text>
+          <text x="722" y="130" class="tg" font-size="14">③ 我校對被標記的那幾句</text>
+          <rect x="722" y="144" width="132" height="26" rx="13" class="f"/>
+          <text x="788" y="162" class="tw" font-size="13" text-anchor="middle">複製 prompt</text>
+          <text x="704" y="206" class="tx" font-size="16">照著按就好</text>
+        </svg>
+      </div>
+      <div class="box fill" style="margin-top:auto;padding:2cqh 2.2cqw">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 3cqw">
+          <div style="padding-right:2.6cqw;border-right:1px solid var(--line-s)">
+            <div class="kv" style="margin-bottom:.8cqh">以前我寫的 SOP</div>
+            <div style="font-size:2.2cqh;line-height:1.6;color:var(--grey)">寫成的是「<b style="color:var(--ink)">原則</b>」——像「首圖要符合品牌調性」。<br>原則沒辦法執行，每次還是要靠人判斷。</div>
+          </div>
+          <div>
+            <div class="kv" style="margin-bottom:.8cqh">現在的 SOP</div>
+            <div style="font-size:2.2cqh;line-height:1.6;color:var(--ink)">寫的是「<b class="hi">動作</b>」——讀哪一筆、填哪幾格、檢查哪幾項，<br>後面接一段可以直接複製的 prompt。</div>
+          </div>
+        </div>
+        <div class="quote" style="margin-top:1.8cqh;font-size:2.8cqh;line-height:1.5">
+          所以我的 SOP 不是一份文件，<b>是後台上的一顆按鈕</b>。
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pnum">04c</div>
+</section>
+
+<!-- ══════════ P05 ══════════ -->
+<section class="slide">
+  <div class="eyebrow">議題二 ｜ 怎麼讓 AI 產出高品質文章</div>
+  <div class="wordmark">AI <i>in</i> <b>marketing</b> meetup</div>
+  <div class="pad">
+    <div class="an" style="display:flex;flex-direction:column;height:100%">
+      <div class="kv" style="margin-bottom:1.3cqh">我試下來的結論是 ——</div>
+      <h1 class="t t-md">大部分的失敗，不是它寫壞了，<br>是<span class="hi">題目一開始就選錯</span></h1>
+      <div class="fx" style="--fh:55cqh;margin-top:2.6cqh">
+        <svg viewBox="0 0 1180 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="三道關卡：題目、資料、語氣">
+          <!-- 第一關 -->
+          <rect x="20" y="40" width="270" height="222" rx="18" class="s"/>
+          <rect x="42" y="62" width="98" height="30" rx="15" class="f"/>
+          <text x="91" y="83" class="tw" font-size="16" text-anchor="middle">第一關</text>
+          <text x="155" y="188" class="tb" font-size="70" text-anchor="middle">題目</text>
+          <text x="155" y="230" class="tg" font-size="19" text-anchor="middle">選錯題，後面全部白做</text>
+          <!-- 第二關 -->
+          <rect x="350" y="40" width="270" height="222" rx="18" class="s2"/>
+          <rect x="372" y="62" width="98" height="30" rx="15" class="ft"/>
+          <rect x="372" y="62" width="98" height="30" rx="15" class="s2"/>
+          <text x="421" y="83" class="tn" font-size="16" text-anchor="middle">第二關</text>
+          <text x="485" y="188" class="tb" font-size="70" text-anchor="middle">資料</text>
+          <text x="485" y="230" class="tg" font-size="19" text-anchor="middle">我最怕它唬爛我</text>
+          <!-- 第三關 -->
+          <rect x="680" y="40" width="270" height="222" rx="18" class="s2"/>
+          <rect x="702" y="62" width="98" height="30" rx="15" class="ft"/>
+          <rect x="702" y="62" width="98" height="30" rx="15" class="s2"/>
+          <text x="751" y="83" class="tn" font-size="16" text-anchor="middle">第三關</text>
+          <text x="815" y="188" class="tb" font-size="70" text-anchor="middle">語氣</text>
+          <text x="815" y="230" class="tg" font-size="19" text-anchor="middle">不要有 AI 味</text>
+          <!-- 箭頭 -->
+          <path d="M296 151 H336" class="s" stroke-width="2"/><path d="M348 151 L333 143.5 L333 158.5 Z" class="f"/>
+          <path d="M626 151 H666" class="s" stroke-width="2"/><path d="M678 151 L663 143.5 L663 158.5 Z" class="f"/>
+          <path d="M956 151 H996" class="s" stroke-width="2"/><path d="M1008 151 L993 143.5 L993 158.5 Z" class="f"/>
+          <!-- 產出 -->
+          <rect x="1012" y="76" width="158" height="150" rx="18" class="ft"/>
+          <rect x="1012" y="76" width="158" height="150" rx="18" class="s"/>
+          <text x="1091" y="142" class="tb" font-size="25" text-anchor="middle">真的能看</text>
+          <text x="1091" y="176" class="tb" font-size="25" text-anchor="middle">的文章</text>
+          <!-- 失敗率 -->
+          <path d="M290 268 V386" class="s2" stroke-dasharray="4 6"/>
+          <path d="M620 268 V386" class="s2" stroke-dasharray="4 6"/>
+          <path d="M950 268 V386" class="s2" stroke-dasharray="4 6"/>
+          <path d="M20 394 H1170" class="s2"/>
+          <path d="M20 300 H286 C318 300 320 352 350 354 H616 C648 354 652 370 680 372 H950" class="s" stroke-width="2.8"/>
+          <circle cx="20" cy="300" r="5" class="f"/>
+          <circle cx="950" cy="372" r="5" class="f"/>
+          <text x="20" y="286" class="tg" font-size="17">失敗率（示意）</text>
+          <text x="560" y="338" class="tb" font-size="19" text-anchor="middle">第一關守住 → 後面兩關的失敗率大幅降低</text>
+        </svg>
+      </div>
+      <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:3cqw">
+        <div class="quote" style="font-size:2.6cqh">我把品質拆成三道關卡。<b>而且順序很重要。</b></div>
+        <div class="kv">題目 → 資料 → 語氣</div>
+      </div>
+    </div>
+  </div>
+  <div class="pnum">05</div>
+</section>
+
+<!-- ══════════ P06 ══════════ -->
+<section class="slide">
+  <div class="eyebrow">議題二 ｜ 第一關 · 題目</div>
+  <div class="wordmark">AI <i>in</i> <b>marketing</b> meetup</div>
+  <div class="pad" style="padding-top:9cqh;padding-bottom:8.5cqh">
+    <div class="an" style="display:flex;flex-direction:column;height:100%">
+      <h1 class="t t-md">題目卡 ——&nbsp;<span class="hi">一篇文章的規格書</span></h1>
+      <div class="kv" style="margin-top:1.3cqh">我一開始也是叫它「給我二十個 iPad 文章標題」，結果拿回二十個換句話說</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 3.6cqw;margin-top:2cqh;flex:1;align-content:start">
+        <div style="border-right:1px solid var(--line-s);padding-right:3.2cqw">
+          <div class="kv" style="margin-bottom:1cqh">後來我改成：它必須走完四層，才准給我標題</div>
+          <div class="fx" style="--fh:29cqh">
+            <svg viewBox="0 0 580 320" preserveAspectRatio="xMinYMid meet" role="img" aria-label="題目發想的四層">
+              <path d="M18 312 L556 22" class="s2" stroke-dasharray="5 7"/>
+              <path d="M572 14 L548 20 L558 34 Z" class="f"/>
+              <rect x="8" y="235" width="125" height="72" rx="12" class="fp"/><rect x="8" y="235" width="125" height="72" rx="12" class="s2"/>
+              <text x="10" y="224" class="tf" font-size="16">01</text>
+              <text x="70" y="266" class="tx" font-size="17" text-anchor="middle">客人</text>
+              <text x="70" y="290" class="tx" font-size="17" text-anchor="middle">原本說的話</text>
+              <rect x="157" y="165" width="125" height="72" rx="12" class="fp"/><rect x="157" y="165" width="125" height="72" rx="12" class="s2"/>
+              <text x="159" y="154" class="tf" font-size="16">02</text>
+              <text x="219" y="196" class="tx" font-size="17" text-anchor="middle">他真正的</text>
+              <text x="219" y="220" class="tx" font-size="17" text-anchor="middle">困惑是什麼</text>
+              <rect x="306" y="95" width="125" height="72" rx="12" class="fp"/><rect x="306" y="95" width="125" height="72" rx="12" class="s2"/>
+              <text x="308" y="84" class="tf" font-size="16">03</text>
+              <text x="368" y="126" class="tx" font-size="17" text-anchor="middle">一篇文章</text>
+              <text x="368" y="150" class="tx" font-size="17" text-anchor="middle">能解決的問題</text>
+              <rect x="455" y="25" width="125" height="72" rx="12" class="f"/>
+              <text x="457" y="14" class="tf" font-size="16">04</text>
+              <text x="517" y="56" class="tw" font-size="17" text-anchor="middle">才是</text>
+              <text x="517" y="80" class="tw" font-size="19" text-anchor="middle">標題</text>
+            </svg>
+          </div>
+          <div class="quote" style="margin-top:1.6cqh;font-size:2.5cqh">規範的第一句話就寫著：<br><b>「你不是標題產生器。」</b></div>
+        </div>
+        <div>
+          <div class="kv" style="margin-bottom:1cqh">題目的三個來源</div>
+          <div class="fx" style="--fh:29cqh">
+            <svg viewBox="0 0 560 320" preserveAspectRatio="xMidYMid meet" role="img" aria-label="題目來源的三個層次">
+              <polygon points="200,42 360,42 400,122 160,122" class="f"/>
+              <text x="280" y="92" class="tw" font-size="26" text-anchor="middle">客服對話</text>
+              <path d="M404 82 H452" class="s"/>
+              <text x="460" y="88" class="tb" font-size="16">只有你有</text>
+              <polygon points="155,130 405,130 445,210 115,210" class="ft"/>
+              <polygon points="155,130 405,130 445,210 115,210" class="s"/>
+              <text x="280" y="162" class="tx" font-size="16" text-anchor="middle">11 個台灣 3C YouTube 頻道</text>
+              <text x="280" y="188" class="tg" font-size="15" text-anchor="middle">「很多人在問、沒有人拍」的象限</text>
+              <polygon points="110,218 450,218 490,298 70,298" class="s2"/>
+              <text x="280" y="252" class="tx" font-size="18" text-anchor="middle">關鍵字工具</text>
+              <text x="280" y="278" class="tg" font-size="15" text-anchor="middle">大家都有</text>
+            </svg>
+          </div>
+          <p class="p" style="margin-top:1.6cqh;font-size:2.15cqh">關鍵字工具你有、別人也有；<br><b>但你的客服紀錄，只有你有。</b></p>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--line);margin-top:1.8cqh;padding-top:2cqh;
+                  display:grid;grid-template-columns:22cqw 1fr;gap:0 3cqw;align-items:stretch">
+        <div class="shot" style="height:21cqh"><img src="pic/後台-題目卡.png" alt="後台題目卡頁，一張完整的題目卡" /></div>
+        <div style="display:flex;flex-direction:column;justify-content:center;gap:1.4cqh">
+          <div>
+            <div class="kv" style="margin-bottom:.9cqh">留下來的那張卡上有</div>
+            <div style="display:flex;flex-wrap:wrap;gap:.8cqh .8cqw">
+              <span class="chip" style="font-size:1.95cqh;padding:.7cqh 1.1cqw">來源</span>
+              <span class="chip" style="font-size:1.95cqh;padding:.7cqh 1.1cqw">客人的原話</span>
+              <span class="chip" style="font-size:1.95cqh;padding:.7cqh 1.1cqw">要解決什麼</span>
+              <span class="chip" style="font-size:1.95cqh;padding:.7cqh 1.1cqw">預計怎麼寫</span>
+              <span class="chip" style="font-size:1.95cqh;padding:.7cqh 1.1cqw">哪幾個地方需要我補資料</span>
+            </div>
+          </div>
+          <div class="box fill" style="padding:1.4cqh 1.4cqw">
+            <div style="font-size:2.05cqh;line-height:1.55;color:var(--ink)"><b class="hi">同一個根本答案，就算重複。</b>
+            每次發想前，強制先讀過現有的一百多張題目卡 —— 先機械比對、再語意判斷，才提案給我挑。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pnum">06</div>
+</section>
+
+<!-- ══════════ P07 ══════════ -->
+<section class="slide">
+  <div class="eyebrow">議題二 ｜ 第二關 · 資料</div>
+  <div class="wordmark">AI <i>in</i> <b>marketing</b> meetup</div>
+  <div class="pad">
+    <div class="an" style="display:flex;flex-direction:column;height:100%">
+      <h1 class="t t-md">第二關是我最擔心的 ——&nbsp;<span class="hi">AI 會不會唬爛我</span></h1>
+      <div class="rule" style="margin:2.2cqh 0 2.4cqh"></div>
+      <div style="display:grid;grid-template-columns:1.3fr 1fr 17cqw;gap:0 3cqw;flex:1;align-content:start">
+        <div style="border-right:1px solid var(--line-s);padding-right:2.8cqw">
+          <div class="kv" style="margin-bottom:1cqh">資料這一段，我不讓它憑記憶寫</div>
+          <div class="fx" style="--fh:27cqh">
+            <svg viewBox="0 0 620 250" preserveAspectRatio="xMinYMid meet" role="img" aria-label="不憑記憶寫，改用 deep research 查證並列出來源">
+              <rect x="4" y="60" width="170" height="90" rx="14" class="s2" stroke-dasharray="6 6"/>
+              <text x="89" y="98" class="tg" font-size="21" text-anchor="middle">憑記憶寫</text>
+              <path d="M40 118 L138 118" class="sf"/>
+              <text x="89" y="140" class="tf" font-size="14" text-anchor="middle">我不用這個</text>
+              <path d="M182 105 H210" class="s2"/><path d="M222 105 L207 97.5 L207 112.5 Z" class="fl"/>
+              <rect x="234" y="36" width="196" height="138" rx="14" class="ft"/>
+              <rect x="234" y="36" width="196" height="138" rx="14" class="s"/>
+              <text x="332" y="82" class="tb" font-size="24" text-anchor="middle">deep research</text>
+              <text x="332" y="118" class="tx" font-size="17" text-anchor="middle">實際去查</text>
+              <text x="332" y="146" class="tx" font-size="17" text-anchor="middle">去讀官方文件</text>
+              <path d="M438 105 H466" class="s"/><path d="M478 105 L463 97.5 L463 112.5 Z" class="f"/>
+              <rect x="490" y="60" width="126" height="90" rx="14" class="s2"/>
+              <rect x="532" y="74" width="42" height="34" rx="5" class="s2"/>
+              <path d="M542 86 H564 M542 96 H557" class="s"/>
+              <text x="553" y="136" class="tb" font-size="18" text-anchor="middle">列出來源</text>
+            </svg>
+          </div>
+          <div style="display:flex;gap:3.4cqw;margin-top:2.2cqh">
+            <div>
+              <div style="display:flex;align-items:baseline;gap:.4cqw"><span class="stat" style="font-size:5.4cqh">500</span><span style="font-size:2.2cqh;color:var(--blue)">多個</span></div>
+              <div class="cap" style="margin-top:.5cqh">文章裡引用的外部連結</div>
+            </div>
+            <div>
+              <div style="display:flex;align-items:baseline;gap:.4cqw"><span class="stat" style="font-size:5.4cqh">200</span><span style="font-size:2.2cqh;color:var(--blue)">多個</span></div>
+              <div class="cap" style="margin-top:.5cqh">直接指向 Apple 官方支援頁</div>
+            </div>
+          </div>
+        </div>
+        <div style="border-right:1px solid var(--line-s);padding-right:2.8cqw">
+          <div class="kv" style="margin-bottom:1cqh">第二條規則：不確定就要標記</div>
+          <div class="fx" style="--fh:36cqh">
+            <svg viewBox="0 0 440 240" preserveAspectRatio="xMidYMid meet" role="img" aria-label="每一個說法都要標成已確認、合理推論或待驗證">
+              <circle cx="34" cy="46" r="21" class="f"/>
+              <path d="M25 46 l7 8 l14 -16" fill="none" stroke="#FDF3E8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="74" y="54" class="tb" font-size="25">已確認</text>
+              <circle cx="34" cy="120" r="21" class="s"/>
+              <path d="M34 99 a21 21 0 0 1 0 42 z" class="f"/>
+              <text x="74" y="128" class="tb" font-size="25">合理推論</text>
+              <circle cx="34" cy="194" r="21" class="s" stroke-dasharray="5 5"/>
+              <text x="34" y="203" class="tb" font-size="24" text-anchor="middle">?</text>
+              <text x="74" y="202" class="tb" font-size="25">待驗證</text>
+              <path d="M330 96 H362 V218 H330" class="s2"/>
+              <text x="374" y="146" class="tg" font-size="16">我校對時</text>
+              <text x="374" y="172" class="tg" font-size="16">只查這</text>
+              <text x="374" y="198" class="tg" font-size="16">幾句</text>
+            </svg>
+          </div>
+        </div>
+        <div>
+          <div class="shot" style="height:40cqh"><img src="pic/官方來源.png" alt="文章末端的資料來源區塊，列出十四筆官方參考連結" /></div>
+          <div class="kv" style="margin-top:1.1cqh;text-align:center;letter-spacing:.06em">每篇文末都有一份來源清單</div>
+        </div>
+      </div>
+      <div class="box fill" style="margin-top:2cqh;padding:2cqh 2.2cqw;display:grid;grid-template-columns:1.25fr 1fr;gap:0 3cqw;align-items:center">
+        <div class="quote" style="font-size:2.6cqh">我要求它：<b>不准用很有自信的語氣，<br>去掩蓋沒有證據的地方。</b></div>
+        <div class="cap" style="font-size:1.95cqh;line-height:1.6">所以我校對的時候，不需要整篇重查，<br>只查被標記的那幾句 —— 這一條替我省下最多時間。</div>
+      </div>
+    </div>
+  </div>
+  <div class="pnum">07</div>
+</section>
+
+<!-- ══════════ P08 ══════════ -->
+<section class="slide">
+  <div class="eyebrow">議題二 ｜ 第三關 · 語氣</div>
+  <div class="wordmark">AI <i>in</i> <b>marketing</b> meetup</div>
+  <div class="pad">
+    <div class="an" style="display:flex;flex-direction:column;height:100%">
+      <h1 class="t t-md">我把品牌手冊，改寫成&nbsp;<span class="hi">AI 讀得懂的版本</span></h1>
+      <div class="kv" style="margin-top:1.4cqh">常見的解法是把 prompt 寫得更長。我以前也是這樣，貼到後來自己都會漏掉幾句。</div>
+      <div class="rule" style="margin:1.8cqh 0 2cqh"></div>
+      <div style="display:grid;grid-template-columns:1.15fr .85fr 16cqw;gap:0 3cqw;flex:1;align-content:center">
+        <div style="border-right:1px solid var(--line-s);padding-right:2.8cqw">
+          <div class="fx" style="--fh:52cqh">
+            <svg viewBox="0 0 560 320" preserveAspectRatio="xMinYMid meet" role="img" aria-label="prompt 每次重講，手冊寫一次自動生效">
+              <text x="10" y="24" class="tf" font-size="15">以前 · prompt</text>
+              <rect x="10" y="38" width="240" height="222" rx="12" class="s2"/>
+              <g class="fl">
+                <rect x="30" y="60" width="196" height="8" rx="4"/><rect x="30" y="80" width="170" height="8" rx="4"/>
+                <rect x="30" y="100" width="200" height="8" rx="4"/><rect x="30" y="120" width="150" height="8" rx="4"/>
+                <rect x="30" y="140" width="190" height="8" rx="4"/><rect x="30" y="160" width="176" height="8" rx="4"/>
+                <rect x="30" y="180" width="160" height="8" rx="4"/><rect x="30" y="200" width="196" height="8" rx="4"/>
+                <rect x="30" y="220" width="120" height="8" rx="4"/><rect x="30" y="240" width="184" height="8" rx="4"/>
+              </g>
+              <path d="M26 116 H236" class="sf"/><path d="M26 196 H236" class="sf"/>
+              <text x="130" y="292" class="tg" font-size="17" text-anchor="middle">每次都要重新交代一次</text>
+              <text x="130" y="314" class="tf" font-size="14" text-anchor="middle">我自己會漏掉幾句</text>
+              <text x="300" y="24" class="tf" font-size="15">現在 · 手冊</text>
+              <rect x="300" y="38" width="250" height="118" rx="12" class="ft"/>
+              <rect x="300" y="38" width="250" height="118" rx="12" class="s"/>
+              <text x="425" y="90" class="tb" font-size="25" text-anchor="middle">品牌手冊</text>
+              <text x="425" y="124" class="tx" font-size="16" text-anchor="middle">改寫成 AI 讀得懂的版本</text>
+              <path d="M425 166 V196" class="s"/><path d="M425 208 L417.5 193 L432.5 193 Z" class="f"/>
+              <rect x="300" y="218" width="250" height="42" rx="12" class="s2"/>
+              <text x="425" y="245" class="tx" font-size="17" text-anchor="middle">放進專案裡，每次工作自動生效</text>
+              <text x="425" y="292" class="tg" font-size="17" text-anchor="middle">寫一次，之後它自己記得</text>
+            </svg>
+          </div>
+        </div>
+        <div style="border-right:1px solid var(--line-s);padding-right:2.8cqw">
+          <div class="kv" style="margin-bottom:.8cqh">我有兩份</div>
+          <div class="fx" style="--fh:49cqh">
+            <svg viewBox="0 0 320 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="兩份規範：管長相、管內容品質">
+              <rect x="10" y="14" width="136" height="230" rx="10" class="s"/>
+              <path d="M10 24 a10 10 0 0 1 10 -10 h116 a10 10 0 0 1 10 10 v34 h-136 z" class="f"/>
+              <text x="78" y="45" class="tw" font-size="17" text-anchor="middle">管長相</text>
+              <text x="30" y="98" class="tx" font-size="15">設計基調</text>
+              <text x="30" y="132" class="tx" font-size="15">品牌色</text>
+              <text x="30" y="166" class="tx" font-size="15">元件怎麼用</text>
+              <rect x="174" y="14" width="136" height="230" rx="10" class="s"/>
+              <path d="M174 24 a10 10 0 0 1 10 -10 h116 a10 10 0 0 1 10 10 v34 h-136 z" class="f"/>
+              <text x="242" y="45" class="tw" font-size="17" text-anchor="middle">管內容品質</text>
+              <text x="194" y="98" class="tx" font-size="15">怎麼思考</text>
+              <text x="194" y="132" class="tx" font-size="15">怎麼打磨</text>
+              <text x="194" y="166" class="tx" font-size="15">出版前檢查什麼</text>
+              <text x="160" y="284" class="tg" font-size="16" text-anchor="middle">每家公司都有一本沒人在看的品牌手冊</text>
+            </svg>
+          </div>
+        </div>
+        <div>
+          <div class="shot" style="height:50cqh"><img src="pic/內容品質規範.png" alt="內容品質規範文件，標註 AI-facing" /></div>
+          <div class="kv" style="margin-top:1.1cqh;text-align:center;letter-spacing:.06em">其中一份 · 標題直接寫著 AI-facing</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pnum">08</div>
+</section>
+
+<!-- ══════════ P09 ══════════ -->
+<section class="slide">
+  <div class="eyebrow">結尾 ｜ 一個我一開始完全沒想到的效益</div>
+  <div class="wordmark">AI <i>in</i> <b>marketing</b> meetup</div>
+  <div class="pad">
+    <div class="an" style="display:flex;flex-direction:column;height:100%">
+      <h1 class="t t-md">這個網站，現在變成我客服時<span class="hi">最常用的東西</span></h1>
+      <div class="fx" style="--fh:48cqh;margin-top:2.6cqh">
+        <svg viewBox="0 0 1180 340" preserveAspectRatio="xMidYMid meet" role="img" aria-label="客服問題到 AI 研究產文，再把連結貼給客人">
+          <!-- ① 客服問題 -->
+          <rect x="14" y="14" width="344" height="306" rx="18" class="s2"/>
+          <text x="40" y="52" class="tf" font-size="15">01 　客服訊息</text>
+          <circle cx="62" cy="118" r="18" class="s2"/>
+          <circle cx="62" cy="112" r="6" class="s2"/>
+          <path d="M50 130 a12 12 0 0 1 24 0" class="s2"/>
+          <rect x="96" y="82" width="230" height="98" rx="14" class="s"/>
+          <path d="M96 106 L80 118 L96 130 Z" class="fp"/>
+          <path d="M96 106 L80 118 L96 130" class="s"/>
+          <g class="fl">
+            <rect x="118" y="106" width="176" height="9" rx="4.5"/>
+            <rect x="118" y="127" width="192" height="9" rx="4.5"/>
+            <rect x="118" y="148" width="134" height="9" rx="4.5"/>
+          </g>
+          <text x="196" y="252" class="tb" font-size="62" text-anchor="middle">?</text>
+          <text x="186" y="294" class="tg" font-size="17" text-anchor="middle">我當下也不知道怎麼解</text>
+          <!-- 箭頭 -->
+          <path d="M366 167 H398" class="s" stroke-width="2"/><path d="M410 167 L395 159.5 L395 174.5 Z" class="f"/>
+          <!-- ② 研究產文 -->
+          <rect x="418" y="14" width="344" height="306" rx="18" class="s"/>
+          <text x="444" y="52" class="tf" font-size="15">02 　丟進去，讓它研究</text>
+          <rect x="520" y="80" width="142" height="176" rx="8" class="s"/>
+          <path d="M638 80 V102 H662" class="s2"/>
+          <g class="fl">
+            <rect x="540" y="118" width="100" height="8" rx="4"/>
+            <rect x="540" y="138" width="108" height="8" rx="4"/>
+            <rect x="540" y="158" width="86" height="8" rx="4"/>
+            <rect x="540" y="178" width="104" height="8" rx="4"/>
+            <rect x="540" y="198" width="70" height="8" rx="4"/>
+          </g>
+          <circle cx="522" cy="232" r="27" class="fp"/>
+          <circle cx="522" cy="232" r="27" class="s" stroke-width="2.4"/>
+          <path d="M541 251 L562 272" class="s" stroke-width="2.8"/>
+          <rect x="648" y="44" width="106" height="32" rx="16" class="f"/>
+          <text x="701" y="66" class="tw" font-size="16" text-anchor="middle">十分鐘</text>
+          <text x="590" y="294" class="tg" font-size="17" text-anchor="middle">去研究、去查證，寫成一篇文章</text>
+          <!-- 箭頭 -->
+          <path d="M770 167 H802" class="s" stroke-width="2"/><path d="M814 167 L799 159.5 L799 174.5 Z" class="f"/>
+          <!-- ③ 貼連結 -->
+          <rect x="822" y="14" width="344" height="306" rx="18" class="s2"/>
+          <text x="848" y="52" class="tf" font-size="15">03 　把連結丟給客人</text>
+          <rect x="876" y="82" width="256" height="98" rx="14" class="ft"/>
+          <rect x="876" y="82" width="256" height="98" rx="14" class="s"/>
+          <path d="M1132 106 L1148 118 L1132 130 Z" class="fp"/>
+          <path d="M1132 106 L1148 118 L1132 130" class="s"/>
+          <rect x="898" y="100" width="212" height="34" rx="17" class="fp"/>
+          <rect x="898" y="100" width="212" height="34" rx="17" class="s2"/>
+          <path d="M918 113 a9 9 0 0 1 9 -9 h4 M932 122 a9 9 0 0 1 -9 9 h-4 M922 117 h10" class="s"/>
+          <text x="1020" y="123" class="tb" font-size="15" text-anchor="middle">一篇寫好的文章</text>
+          <g class="fl"><rect x="898" y="148" width="150" height="9" rx="4.5"/></g>
+          <circle cx="994" cy="232" r="29" class="s" stroke-width="2"/>
+          <path d="M979 232 l11 12 l20 -25" class="s" stroke-width="3"/>
+          <text x="994" y="294" class="tg" font-size="17" text-anchor="middle">下一個問同樣問題的，我直接貼</text>
+        </svg>
+      </div>
+      <div style="border-top:1px solid var(--line);margin-top:auto;padding-top:2.4cqh;
+                  display:grid;grid-template-columns:1.25fr 1fr;gap:0 3.4cqw;align-items:center">
+        <div>
+          <div class="kv" style="margin-bottom:1.1cqh">一個客服問題，同時解決了三件事</div>
+          <div style="display:flex;gap:1cqw;flex-wrap:wrap">
+            <span class="chip">這位客人</span>
+            <span class="chip">下一位客人</span>
+            <span class="chip" style="border-color:var(--blue);background:var(--blue-t)">還有 Google</span>
+          </div>
+        </div>
+        <div class="quote" style="font-size:2.4cqh">以前客服對我來說是成本。<br>現在它是我的<b>選題來源</b>，也是我的<b>內容產線入口</b>。</div>
+      </div>
+    </div>
+  </div>
+  <div class="pnum">09</div>
+</section>
+
+<!-- ══════════ P10 ══════════ -->
+<section class="slide">
+  <div class="eyebrow">收尾</div>
+  <div class="wordmark">AI <i>in</i> <b>marketing</b> meetup</div>
+  <div class="pad">
+    <div class="an" style="display:flex;flex-direction:column;height:100%">
+      <h1 class="t t-lg">今天想分享的<span class="hi">三件事</span></h1>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 2.6cqw;margin-top:3cqh">
+        <div class="box" style="padding:2.2cqh 1.6cqw">
+          <div style="display:flex;align-items:baseline;gap:.9cqw">
+            <div class="stat" style="font-size:3.4cqh">一</div>
+            <div class="kv" style="font-size:1.6cqh">回到最開始那個痛點</div>
+          </div>
+          <div style="font-family:var(--serif);font-weight:700;font-size:2.9cqh;line-height:1.45;margin-top:.9cqh;color:var(--ink)">站是自己的，<br>所以<span class="hi">改得動，也改得快</span></div>
+          <div class="cap" style="margin-top:1.1cqh;font-size:1.92cqh">技術面的 schema、網站地圖、搜尋索引，一次全站改完；內容面要調語氣、補段落也一樣。平台的部落格模組動不了的那些，現在想到就能試、當天就能改。</div>
+        </div>
+        <div class="box" style="padding:2.2cqh 1.6cqw">
+          <div style="display:flex;align-items:baseline;gap:.9cqw">
+            <div class="stat" style="font-size:3.4cqh">二</div>
+            <div class="kv" style="font-size:1.6cqh">議題一的答案</div>
+          </div>
+          <div style="font-family:var(--serif);font-weight:700;font-size:2.9cqh;line-height:1.45;margin-top:.9cqh;color:var(--ink)">先給<span class="hi">格式</span>，<br>才管得動、才 <span class="hi">SOP</span> 得起來</div>
+          <div class="cap" style="margin-top:1.1cqh;font-size:1.92cqh">有了固定欄位，內容才變成看得見的資料；每個動作形狀一樣，SOP 才寫得出「動作」，而不是「原則」。</div>
+        </div>
+        <div class="box" style="padding:2.2cqh 1.6cqw">
+          <div style="display:flex;align-items:baseline;gap:.9cqw">
+            <div class="stat" style="font-size:3.4cqh">三</div>
+            <div class="kv" style="font-size:1.6cqh">議題二的答案</div>
+          </div>
+          <div style="font-family:var(--serif);font-weight:700;font-size:2.9cqh;line-height:1.45;margin-top:.9cqh;color:var(--ink)">品質八成，<br><span class="hi">在題目就決定了</span></div>
+          <div class="cap" style="margin-top:1.1cqh;font-size:1.92cqh">而題目最好的來源，是我每天都在回的那些客服訊息 —— 那份紀錄，只有我自己有。</div>
+        </div>
+      </div>
+      <div class="box fill" style="margin-top:auto;padding:3cqh 2.6cqw">
+        <div class="kv" style="margin-bottom:1.4cqh">我不是行銷人，這套做法一定有更好的</div>
+        <div style="font-family:var(--serif);font-weight:700;font-size:3.6cqh;color:var(--ink);line-height:1.45">
+          等一下交流的時候，<span class="hi">很想聽聽你的意見</span>
+        </div>
+        <div class="cap" style="margin-top:1.2cqh;font-size:2.05cqh">不管是哪裡覺得怪，還是你有更好的做法 —— 都歡迎直接跟我說。</div>
+      </div>
+      <div style="border-top:1px solid var(--line);margin-top:2.6cqh;padding-top:2cqh;
+                  display:grid;grid-template-columns:1fr auto;gap:0 3cqw;align-items:end">
+        <div></div>
+        <div style="text-align:right">
+          <div style="font-family:var(--serif);font-size:2.7cqh;color:var(--blue);font-weight:700">謝謝大家</div>
+          <div class="kv" style="margin-top:.6cqh">琨懿 Neil ｜ 果果國際</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pnum">10</div>
+</section>
+
+</div>
+
+<div id="lb" aria-hidden="true"><span class="close">ESC 關閉</span><img id="lbimg" src="" alt="" /></div>
+
+<script>
+  var stage=document.getElementById('stage');
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var bar=document.getElementById('bar');
+  var lb=document.getElementById('lb'), lbimg=document.getElementById('lbimg');
+  var i=0;
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach(function(s,k){s.classList.toggle('active',k===i);});
+    bar.style.width=(i/(slides.length-1)*100)+'%';
+    history.replaceState(null,'','#'+(i+1));
+  }
+  function next(){show(i+1);} function prev(){show(i-1);}
+  function openLb(src,alt){lbimg.src=src;lbimg.alt=alt||'';lb.classList.add('on');lb.setAttribute('aria-hidden','false');}
+  function closeLb(){lb.classList.remove('on');lb.setAttribute('aria-hidden','true');lbimg.src='';}
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){ if(lb.classList.contains('on')){e.preventDefault();closeLb();} return; }
+    if(lb.classList.contains('on')) return;
+    if(['ArrowRight',' ','PageDown','Enter'].indexOf(e.key)>-1){e.preventDefault();next();}
+    else if(['ArrowLeft','PageUp','Backspace'].indexOf(e.key)>-1){e.preventDefault();prev();}
+    else if(e.key==='Home'){e.preventDefault();show(0);}
+    else if(e.key==='End'){e.preventDefault();show(slides.length-1);}
+    else if(e.key.toLowerCase()==='f'){ if(!document.fullscreenElement){ if(stage.requestFullscreen) stage.requestFullscreen(); } else { document.exitFullscreen(); } }
+  });
+  stage.addEventListener('click',function(e){
+    var shot=e.target.closest ? e.target.closest('.shot') : null;
+    if(shot){ var im=shot.querySelector('img'); if(im){ e.stopPropagation(); openLb(im.getAttribute('src'),im.getAttribute('alt')); return; } }
+    if(e.target.closest && (e.target.closest('a') || e.target.closest('button'))) return;
+    var r=stage.getBoundingClientRect();
+    if(e.clientX < r.left + r.width*0.28) prev(); else next();
+  });
+  lb.addEventListener('click',function(e){e.stopPropagation();closeLb();});
+  var tx=0;
+  stage.addEventListener('touchstart',function(e){tx=e.changedTouches[0].clientX;},{passive:true});
+  stage.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-tx; if(Math.abs(dx)>40){ if(lb.classList.contains('on')) return; dx<0?next():prev(); }},{passive:true});
+  // 可點選的問題 → 切換右側畫面
+  [].slice.call(document.querySelectorAll('[data-tabs]')).forEach(function(group){
+    var wrap=document.querySelector(group.getAttribute('data-tabs'));
+    if(!wrap) return;
+    var btns=[].slice.call(group.querySelectorAll('[data-tab]'));
+    var panels=[].slice.call(wrap.querySelectorAll('[data-panel]'));
+    btns.forEach(function(b){
+      b.addEventListener('click',function(e){
+        e.stopPropagation();
+        var k=b.getAttribute('data-tab');
+        btns.forEach(function(x){x.classList.toggle('on', x===b);});
+        panels.forEach(function(pn){pn.hidden = pn.getAttribute('data-panel')!==k;});
+      });
+    });
+  });
+
+  var start=parseInt((location.hash||'').replace('#',''),10)||1;
+  show(start-1);
+</script>
+</body>
+</html>
